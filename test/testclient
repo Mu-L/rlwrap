@@ -123,8 +123,8 @@ rlwraps behaviour when the client does things like:
 :P print chunky
 :r reset prompt
 :R raw mode (char-at-a-time)
-:s and sefgault
-:S and trickle slowly
+:s sefgault
+:S trickle slowly
 :t trickle output (10 chars)
 :T test controlling terminal
 :u try some utf-8
@@ -282,11 +282,13 @@ sub change_prompt {
   my ($termwidth) = eval "GetTerminalSize"; 
   { local $prompt = "New prompt here > ";
     my $redblah = red("blah");
-    lprint "\%p -> pid, \%t -> tty, %d -> pwd, red{blah} -> $redblah, \\n -newline, 4*x -> xxxx" .($have_ReadKey ? ", %w -> termwidth\n" : "\n");
+    lprint "\%p -> pid, \%t -> tty, %d -> pwd, red{blah} -> $redblah, \\n -> newline, \\r -> CR, \\b -> backspace,  4*x -> xxxx" .($have_ReadKey ? ", %w -> termwidth\n" : "\n");
     prompt();
     $input = <>;
     $input =~ s/\r?\n$//;
     $input =~ s/\\n/\n/g;
+    $input =~ s/\\r/\r/g;
+    $input =~ s/\\b/\b/g;
     $input =~ s/\%w/$termwidth/ge;
     $input =~ s/\((\d.*?)\)/eval($1)/ge;
     $input =~ s/(\d+)\*([^ {}]+)/$2 x $1/ge;
